@@ -64,7 +64,7 @@ class LestaClusterSelector
     {
         Console.Clear();
         Console.WriteLine("Выберите серверы для разблокировки:");
-        int index = 1;
+        int index = 0; // Начинаем с 0
         foreach (var server in servers.Keys)
         {
             Console.WriteLine($"{index}. {server}");
@@ -72,16 +72,16 @@ class LestaClusterSelector
         }
         Console.WriteLine($"{index}. Разблокировать все сервера");
         Console.WriteLine($"{index + 1}. Тестировать серверы по задержке");
-        Console.WriteLine("Ваш выбор: (можно ввести сервера через запятую, чтобы разблокировать 2 сервера или более)");
+        Console.WriteLine("Ваш выбор: (можно ввести номера через запятую, чтобы разблокировать несколько серверов)");
 
         string input = Console.ReadLine();
         var choices = input.Split(',').Select(x => x.Trim()).ToList();
 
-        if (choices.Contains((servers.Count + 1).ToString())) // Разблокировать все
+        if (choices.Contains(servers.Count.ToString())) // Разблокировать все
         {
             UpdateHostsFile(servers.Keys.ToList());
         }
-        else if (choices.Contains((servers.Count + 2).ToString())) // Тест пинга
+        else if (choices.Contains((servers.Count + 1).ToString())) // Тест пинга
         {
             PingAllServers();
         }
@@ -90,15 +90,16 @@ class LestaClusterSelector
             List<string> selectedServers = new List<string>();
             foreach (var choice in choices)
             {
-                if (int.TryParse(choice, out int num) && num >= 1 && num <= servers.Count)
+                if (int.TryParse(choice, out int num) && num >= 0 && num < servers.Count)
                 {
-                    selectedServers.Add(servers.Keys.ElementAt(num - 1));
+                    selectedServers.Add(servers.Keys.ElementAt(num));
                 }
             }
 
             UpdateHostsFile(selectedServers);
         }
     }
+
 
     private void PingAllServers()
     {
@@ -108,6 +109,8 @@ class LestaClusterSelector
             var pingResult = PingServer(server.Value);
             Console.WriteLine($"{server.Key}: {pingResult}");
         }
+        Console.WriteLine("\n Завершено. Ожидание 5 секунд");
+        System.Threading.Thread.Sleep(5000);
     }
 
     private string PingServer(string serverUrl)
@@ -128,7 +131,7 @@ class LestaClusterSelector
         }
         catch (Exception)
         {
-            return "Ошибка при пинге";
+            return "Ошибка при получении задержки сервера.";
         }
     }
 }
