@@ -72,7 +72,7 @@ class LestaClusterSelector
         }
         Console.WriteLine($"{index}. Разблокировать все сервера");
         Console.WriteLine($"{index + 1}. Тестировать серверы по задержке");
-        Console.WriteLine("Введите номера серверов через запятую:");
+        Console.WriteLine("Ваш выбор: (можно ввести сервера через запятую, чтобы разблокировать 2 сервера или более)");
 
         string input = Console.ReadLine();
         var choices = input.Split(',').Select(x => x.Trim()).ToList();
