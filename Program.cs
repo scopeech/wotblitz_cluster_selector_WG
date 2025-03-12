@@ -63,7 +63,7 @@ class LestaClusterSelector
     {
         Console.Clear();
         Console.WriteLine("Выберите серверы для разблокировки:");
-        int index = 1;
+        int index = 0; // Начать с 0
         foreach (var server in servers.Keys)
         {
             Console.WriteLine($"{index}. {server}");
@@ -77,15 +77,15 @@ class LestaClusterSelector
         string input = Console.ReadLine();
         var choices = input.Split(',').Select(x => x.Trim()).ToList();
 
-        if (choices.Contains((servers.Count + 1).ToString())) // Разблокировать все
+        if (choices.Contains((servers.Count).ToString())) // Разблокировать все
         {
             UpdateHostsFile(servers.Keys.ToList());
         }
-        else if (choices.Contains((servers.Count + 2).ToString())) // Тест пинга
+        else if (choices.Contains((servers.Count + 1).ToString())) // Тест пинга
         {
             PingAllServers();
         }
-        else if (choices.Contains((servers.Count + 3).ToString())) // Открыть hosts в Notepad
+        else if (choices.Contains((servers.Count + 2).ToString())) // Открыть hosts в Notepad
         {
             OpenHostsInNotepad();
         }
@@ -94,9 +94,9 @@ class LestaClusterSelector
             List<string> selectedServers = new List<string>();
             foreach (var choice in choices)
             {
-                if (int.TryParse(choice, out int num) && num >= 1 && num <= servers.Count)
+                if (int.TryParse(choice, out int num) && num >= 0 && num < servers.Count) // Индексы с 0
                 {
-                    selectedServers.Add(servers.Keys.ElementAt(num - 1));
+                    selectedServers.Add(servers.Keys.ElementAt(num));
                 }
             }
 
