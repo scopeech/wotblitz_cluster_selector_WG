@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 
-class LestaClusterSelector
+class WotBlitzClusterSelector
 {
     private Dictionary<string, string> servers = new Dictionary<string, string>()
     {
@@ -198,7 +198,7 @@ class Program
             return;
         }
 
-        LestaClusterSelector manager = new LestaClusterSelector();
+        WotBlitzClusterSelector manager = new WotBlitzClusterSelector();
         while (true)
         {
             manager.ShowMenu();
