@@ -28,3 +28,10 @@
 1. Откройте командную строку и введите:
    ```sh
    notepad C:\Windows\System32\drivers\etc\hosts
+
+   ❗ wotblitz_cluster_selector — фанатский проект, не имеющий никакого отношения к компании Wargaming.
+Обратная связь:
+Если wotb-csm не работает, создайте тему в [Issues](https://github.com/scopeech/wotblitz_cluster_selector_WG/issues)!
+Либо свяжитесь с владельцем в [Telegram](https://t.me/juniorscopeech)
+
+
