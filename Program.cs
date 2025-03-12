@@ -14,7 +14,6 @@ class LestaClusterSelector
         { "EU_C2 (Германия)", "login2.wotblitz.eu" },
         { "EU_C3 (Польша)", "login3.wotblitz.eu" },
         { "EU_C4 (Казахстан)", "login4.wotblitz.eu" }
-        
     };
 
     private string replacementIp = "0.0.0.0";
@@ -64,7 +63,7 @@ class LestaClusterSelector
     {
         Console.Clear();
         Console.WriteLine("Выберите серверы для разблокировки:");
-        int index = 0; // Начинаем с 0
+        int index = 1;
         foreach (var server in servers.Keys)
         {
             Console.WriteLine($"{index}. {server}");
@@ -72,34 +71,38 @@ class LestaClusterSelector
         }
         Console.WriteLine($"{index}. Разблокировать все сервера");
         Console.WriteLine($"{index + 1}. Тестировать серверы по задержке");
-        Console.WriteLine("Ваш выбор: (можно ввести номера через запятую, чтобы разблокировать несколько серверов)");
+        Console.WriteLine($"{index + 2}. Открыть hosts с помощью блокнота");
+        Console.WriteLine("Ваш выбор: (можно ввести сервера через запятую, чтобы разблокировать 2 сервера или более)");
 
         string input = Console.ReadLine();
         var choices = input.Split(',').Select(x => x.Trim()).ToList();
 
-        if (choices.Contains(servers.Count.ToString())) // Разблокировать все
+        if (choices.Contains((servers.Count + 1).ToString())) // Разблокировать все
         {
             UpdateHostsFile(servers.Keys.ToList());
         }
-        else if (choices.Contains((servers.Count + 1).ToString())) // Тест пинга
+        else if (choices.Contains((servers.Count + 2).ToString())) // Тест пинга
         {
             PingAllServers();
+        }
+        else if (choices.Contains((servers.Count + 3).ToString())) // Открыть hosts в Notepad
+        {
+            OpenHostsInNotepad();
         }
         else
         {
             List<string> selectedServers = new List<string>();
             foreach (var choice in choices)
             {
-                if (int.TryParse(choice, out int num) && num >= 0 && num < servers.Count)
+                if (int.TryParse(choice, out int num) && num >= 1 && num <= servers.Count)
                 {
-                    selectedServers.Add(servers.Keys.ElementAt(num));
+                    selectedServers.Add(servers.Keys.ElementAt(num - 1));
                 }
             }
 
             UpdateHostsFile(selectedServers);
         }
     }
-
 
     private void PingAllServers()
     {
@@ -109,7 +112,7 @@ class LestaClusterSelector
             var pingResult = PingServer(server.Value);
             Console.WriteLine($"{server.Key}: {pingResult}");
         }
-        Console.WriteLine("\n Завершено. Ожидание 5 секунд");
+        Console.WriteLine("Ожидание 5 секунд.");
         System.Threading.Thread.Sleep(5000);
     }
 
@@ -131,7 +134,56 @@ class LestaClusterSelector
         }
         catch (Exception)
         {
-            return "Ошибка при получении задержки сервера.";
+            return "Ошибка при пинге";
+        }
+    }
+
+    // Новый метод для открытия файла hosts в Notepad с правами администратора
+    private void OpenHostsInNotepad()
+    {
+        try
+        {
+            if (!IsAdministrator())
+            {
+                // Повторный запуск с правами администратора
+                RunAsAdmin();
+            }
+            else
+            {
+                Process.Start("notepad.exe", hostsFilePath);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при открытии Notepad: {ex.Message}");
+        }
+    }
+
+    // Метод проверки прав администратора
+    private bool IsAdministrator()
+    {
+        var identity = System.Security.Principal.WindowsIdentity.GetCurrent();
+        var principal = new System.Security.Principal.WindowsPrincipal(identity);
+        return principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
+    }
+
+    // Метод для перезапуска программы с правами администратора
+    private void RunAsAdmin()
+    {
+        ProcessStartInfo psi = new ProcessStartInfo
+        {
+            FileName = Process.GetCurrentProcess().MainModule.FileName,
+            UseShellExecute = true,
+            Verb = "runas"
+        };
+
+        try
+        {
+            Process.Start(psi);
+        }
+        catch
+        {
+            Console.WriteLine("Запуск с правами администратора отменен.");
         }
     }
 }
