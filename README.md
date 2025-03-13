@@ -34,7 +34,7 @@
 
 
 Обратная связь:
-Если wotb-csm не работает, создайте тему в [Issues](https://github.com/scopeech/wotblitz_cluster_selector_WG/issues)!
+Если wotblitz_cluster_selector не работает, создайте тему в [Issues](https://github.com/scopeech/wotblitz_cluster_selector_WG/issues)!
 Либо свяжитесь с владельцем в [Telegram](https://t.me/juniorscopeech)
 
 
